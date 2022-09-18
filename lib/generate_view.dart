@@ -14,8 +14,14 @@ class _GenerateViewState extends State<GenerateView>{
 
   void _generateCode(){
     setState((){
-      var gen = TOTPGenerator(key: Setting.key, length: Setting.length, step: Setting.step);
-      _generatedValue = gen.generate(DateTime.now());
+      var gen = TOTPGenerator(
+        key: Setting.key, keyType: Setting.keyType,
+        length: Setting.length, step: Setting.step);
+      try{
+        _generatedValue = gen.generate(DateTime.now());
+      } catch(e){
+        _generatedValue = "------";
+      }
     });
   }
 

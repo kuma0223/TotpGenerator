@@ -30,9 +30,14 @@ class _SettingViewState extends State<SettingView>{
             },
           ),
           
-          const _TextItem(
+          _SelectItem(
             title: "キーフォーマット",
-            value: "Base16",
+            value: Setting.keyType,
+            options: const [["Base16", "Base16"], ["Base32", "Base32"], ["ASCII", "ASCII"]],
+            onSelected: (value){
+              if(value == null) return;
+              save(()=>Setting.keyType=value);
+            }
           ), 
 
           _SelectItem(
