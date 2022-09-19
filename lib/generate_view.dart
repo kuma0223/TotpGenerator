@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:totp_generator/classes/setting.dart';
 import 'package:totp_generator/classes/totp.dart';
@@ -10,7 +13,36 @@ class GenerateView extends StatefulWidget{
 }
 
 class _GenerateViewState extends State<GenerateView>{
-  var _generatedValue = "";
+  String _generatedValue = "";
+  DateTime? _generatedTime;
+  Timer? _timer;
+  int _limit = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), timerTick);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void timerTick(Timer timer){
+    if(_generatedValue.isEmpty) return;
+    var step = Setting.step;
+    var start = DateTime.fromMillisecondsSinceEpoch(_generatedTime!.millisecondsSinceEpoch ~/ 1000 ~/ step * step * 1000);
+    var span = DateTime.now().difference(start);
+    setState((){
+      _limit = max(Setting.step - span.inSeconds, 0);
+      if(_limit == 0){
+        _generatedValue = "";
+        //_generatedTime = null;
+      }
+    });
+  }
 
   void _generateCode(){
     setState((){
@@ -18,7 +50,9 @@ class _GenerateViewState extends State<GenerateView>{
         key: Setting.key, keyType: Setting.keyType,
         length: Setting.length, step: Setting.step);
       try{
-        _generatedValue = gen.generate(DateTime.now());
+        var now = DateTime.now();
+        _generatedValue = gen.generate(now);
+        _generatedTime = now;
       } catch(e){
         _generatedValue = "------";
       }
@@ -37,6 +71,7 @@ class _GenerateViewState extends State<GenerateView>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _CodeBlock(_generatedValue),
+              _TimeLimit(_limit),
               const SizedBox( height: 30),
               _GenerateButton(onPressed:_generateCode),
             ],
@@ -83,6 +118,25 @@ class _CodeBlock extends StatelessWidget{
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 36),
       ),
+    );
+  }
+}
+
+class _TimeLimit extends StatelessWidget{
+  final int limit;
+
+  const _TimeLimit(this.limit);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Icon(Icons.update, color: Colors.blueGrey, size: 26),
+        const SizedBox(width: 2),
+        Text(limit>0 ? "${limit}s" : "OVER", textAlign: TextAlign.right, style: const TextStyle(fontSize: 20)),
+      ],
     );
   }
 }
