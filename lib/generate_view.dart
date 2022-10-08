@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:totp_generator/classes/setting.dart';
 import 'package:totp_generator/classes/totp.dart';
 
@@ -21,7 +22,7 @@ class _GenerateViewState extends State<GenerateView>{
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 500), timerTick);
+    _timer = Timer.periodic(const Duration(milliseconds: 100), timerTick);
   }
 
   @override
@@ -59,6 +60,13 @@ class _GenerateViewState extends State<GenerateView>{
     });
   }
 
+  void _copyCode(){
+    if(_generatedValue == "") return;
+    Clipboard.setData(ClipboardData(text:_generatedValue));
+    const snackBar = SnackBar(content: Text('コードをコピーしました'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -71,7 +79,13 @@ class _GenerateViewState extends State<GenerateView>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _CodeBlock(_generatedValue),
-              _TimeLimit(_limit),
+              Row(
+                children: [
+                  _TimeLimit(_limit),
+                  Expanded(child: Container()),
+                  IconButton(icon: const Icon(Icons.content_copy), onPressed: _copyCode),
+                ],
+              ),
               const SizedBox( height: 30),
               _GenerateButton(onPressed:_generateCode),
             ],
@@ -92,7 +106,7 @@ class _GenerateButton extends StatelessWidget{
     return ElevatedButton(
       onPressed: onPressed,
       style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(Colors.green)
+        //backgroundColor: MaterialStatePropertyAll(Colors.green)
       ),
       child: const Padding(
         padding: EdgeInsets.all(5),
@@ -133,9 +147,9 @@ class _TimeLimit extends StatelessWidget{
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        const Icon(Icons.update, color: Colors.blueGrey, size: 26),
+        const Icon(Icons.update, color: Colors.blueGrey),
         const SizedBox(width: 2),
-        Text(limit>0 ? "${limit}s" : "OVER", textAlign: TextAlign.right, style: const TextStyle(fontSize: 20)),
+        Text(limit>0 ? "$limit" : "", textAlign: TextAlign.right, style: const TextStyle(fontSize: 20)),
       ],
     );
   }
