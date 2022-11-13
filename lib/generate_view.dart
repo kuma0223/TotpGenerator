@@ -63,7 +63,7 @@ class _GenerateViewState extends State<GenerateView>{
   void _copyCode(){
     if(_generatedValue == "") return;
     Clipboard.setData(ClipboardData(text:_generatedValue));
-    const snackBar = SnackBar(content: Text('コードをコピーしました'));
+    const snackBar = SnackBar(content: Text('パスワードをコピーしました'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
@@ -110,7 +110,7 @@ class _GenerateButton extends StatelessWidget{
       ),
       child: const Padding(
         padding: EdgeInsets.all(5),
-        child: Text("コード生成", style: TextStyle(fontSize: 26)),
+        child: Text("パスワード生成", style: TextStyle(fontSize: 26)),
       ),
     );
   }
