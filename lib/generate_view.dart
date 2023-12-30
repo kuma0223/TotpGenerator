@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:totp_generator/classes/setting.dart';
+import 'package:totp_generator/classes/xxsetting.dart';
 import 'package:totp_generator/classes/totp.dart';
 
 class GenerateView extends StatefulWidget{
@@ -33,11 +33,11 @@ class _GenerateViewState extends State<GenerateView>{
 
   void timerTick(Timer timer){
     if(_generatedValue.isEmpty) return;
-    var step = Setting.step;
+    var step = XXSetting.step;
     var start = DateTime.fromMillisecondsSinceEpoch(_generatedTime!.millisecondsSinceEpoch ~/ 1000 ~/ step * step * 1000);
     var span = DateTime.now().difference(start);
     setState((){
-      _limit = max(Setting.step - span.inSeconds, 0);
+      _limit = max(XXSetting.step - span.inSeconds, 0);
       if(_limit == 0){
         _generatedValue = "";
         //_generatedTime = null;
@@ -48,8 +48,8 @@ class _GenerateViewState extends State<GenerateView>{
   void _generateCode(){
     setState((){
       var gen = TOTPGenerator(
-        key: Setting.key, keyType: Setting.keyType,
-        length: Setting.length, step: Setting.step);
+        key: XXSetting.key, keyType: XXSetting.keyType,
+        length: XXSetting.length, step: XXSetting.step);
       try{
         var now = DateTime.now();
         _generatedValue = gen.generate(now);

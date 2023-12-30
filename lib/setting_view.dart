@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:totp_generator/classes/setting.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:totp_generator/classes/xxsetting.dart';
 
 class SettingView extends StatefulWidget{
   const SettingView({super.key});
@@ -14,7 +14,7 @@ class _SettingViewState extends State<SettingView>{
 
   void save(Function() func){
     setState(func);
-    Setting.save();
+    XXSetting.save();
   }
 
   @override
@@ -24,46 +24,46 @@ class _SettingViewState extends State<SettingView>{
         children: [
           _TextItem(
             title: "生成キー",
-            value: Setting.key,
+            value: XXSetting.key,
             onInputed: (value){
               if(value == null) return;
-              save(()=>Setting.key=value);
+              save(()=>XXSetting.key=value);
             },
           ),
           
           _SelectItem(
             title: "キーフォーマット",
-            value: Setting.keyType,
+            value: XXSetting.keyType,
             options: const [["Base16", "Base16"], ["Base32", "Base32"], ["ASCII", "ASCII"]],
             onSelected: (value){
               if(value == null) return;
-              save(()=>Setting.keyType=value);
+              save(()=>XXSetting.keyType=value);
             }
           ), 
 
           _SelectItem(
             title: "時間ステップ",
-            value: "${Setting.step}秒",
+            value: "${XXSetting.step}秒",
             options: const [["30秒", 30], ["60秒", 60]],
             onSelected: (value){
               if(value == null) return;
-              save(()=>Setting.step=value);
+              save(()=>XXSetting.step=value);
             }
           ), 
 
           _SelectItem(
             title: "パスワード長",
-            value: "${Setting.length}",
+            value: "${XXSetting.length}",
             options: const [["6", 6], ["8", 8]],
             onSelected: (value){
               if(value == null) return;
-              save(()=>Setting.length=value);
+              save(()=>XXSetting.length=value);
             }
           ),
 
           _SelectItem(
             title: "シード種類",
-            value: SeedTypes.getName(Setting.seedType),
+            value: SeedTypes.getName(XXSetting.seedType),
             options: [
               [SeedTypes.getName(SeedTypes.now), SeedTypes.now],
               [SeedTypes.getName(SeedTypes.shift), SeedTypes.shift],
@@ -71,18 +71,18 @@ class _SettingViewState extends State<SettingView>{
             ],
             onSelected: (value){
               if(value == null) return;
-              save(()=>Setting.seedType=value);
+              save(()=>XXSetting.seedType=value);
             }
           ),
 
           Visibility(
-            visible: Setting.seedType == SeedTypes.hold,
+            visible: XXSetting.seedType == SeedTypes.hold,
             child: _EpocSecItem(
               title: "指定日時",
-              value: Setting.seedHoldTime,
+              value: XXSetting.seedHoldTime,
               onInputed: (value){
                 //if(value == null) return;
-                save(()=>Setting.seedHoldTime=value);
+                save(()=>XXSetting.seedHoldTime=value);
               },
             ),
           ),

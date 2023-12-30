@@ -1,24 +1,36 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:totp_generator/classes/setting.dart';
-import 'package:totp_generator/generate_view.dart';
-import 'package:totp_generator/setting_view.dart';
+import 'package:totp_generator/views/generate_page.dart';
+import 'package:totp_generator/views/totp_setting_page.dart';
 
 void main() async{
-  runApp(const MyApp());
-  await Setting.load();
+  var app = const MyApp();
+  await app.load();
+  runApp(app);
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static Setting setting = Setting();
+  static TotpParam param = TotpParam();
+
+  Future<void> load() async{
+    await setting.load();
+    if(setting.params.isEmpty){
+      setting.params.add(TotpParam());
+    }
+    setting.selected = min(setting.selected, setting.params.length-1);
+    param = setting.params[setting.selected];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'TOTP Generator',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
@@ -28,26 +40,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child:  Scaffold(
-        bottomNavigationBar: Container(
-          color: Colors.green,
-          child: const TabBar(
-            indicatorColor: Colors.white,
-            tabs: [
-              Tab(icon: Icon(Icons.pin)),
-              Tab(icon: Icon(Icons.settings)),
-            ]
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            GenerateView(),
-            SettingView(),
-          ],
-        ),
-      ),
-    );
+    return Scaffold(
+        body: GeneratePage()
+      );
   }
 }
